@@ -1,31 +1,28 @@
-from ..conf import settings as UvicornFrameworkSettings
-
 from ..http.responses import NotImplementedResponse
 
 
 class Application:
 
-    def __init__(
-        self,
-        scope,
-        receive,
-        send,
-        settings=UvicornFrameworkSettings
-    ):
-        self.scope = scope
-        self.receive = receive
-        self.send = send
+    def __init__(self, settings):
         self.settings = settings
+        self.set_routes()
 
-    @property
-    def response(self):
+    async def __call__(self, scope, receive, send):
+        response = self.response(scope, receive, send)
+        await send(response.start)
+        await send(response.body)
+
+    def response(self, scope, receive, send):
         return NotImplementedResponse()
+
+    def set_routes(self):
+        for route in self.settings.ROUTES:
+            self.settings.ROUTER.register(route)
 
 
 class HttpApplication(Application):
 
-    @property
-    def response(self):
-        request = self.settings.REQUEST(self.scope, self.settings)
+    def response(self, scope, receive, send):
+        request = self.settings.REQUEST(scope, self.settings)
         assert request.type == 'http'
         return self.settings.ROUTER.get_reponse(request, self.settings)

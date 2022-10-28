@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from .applications import HttpApplication
 from .database.models import Model
 from .http.requests import Request
 from .routers import Router, route
@@ -9,10 +10,13 @@ from .template_engines.template_engines import TemplateEngine
 
 class Settings:
 
+    __APPLICATION = None
     __DB_ENGINE = None
     __DB_SESSION = None
+    __ROUTER = None
     __TEMPLATE_ENGINE = None
 
+    APPLICATION_CLASS = HttpApplication
     APPS = []
 
     DEBUG = True
@@ -22,12 +26,21 @@ class Settings:
 
     REQUEST = Request
 
-    ROUTER = Router()
+    ROUTER_CLASS = Router
+
+    ROUTES = []
 
     SECRET_KEY = 'test'
 
     TEMPLATES_DIR = 'templates'
     TEMPLATE_ENCODING = 'utf-8'
+
+    @property
+    def APPLICATION(self):
+        if self.__APPLICATION is not None:
+            return self.__APPLICATION
+        self.__APPLICATION = self.APPLICATION_CLASS(settings=self)
+        return self.__APPLICATION
 
     @property
     def DB_ENGINE(self):
@@ -45,6 +58,13 @@ class Settings:
 
     def DB_MIGRATE(self):
         Model.metadata.create_all(self.DB_ENGINE)
+
+    @property
+    def ROUTER(self):
+        if self.__ROUTER is not None:
+            return self.__ROUTER
+        self.__ROUTER = self.ROUTER_CLASS()
+        return self.__ROUTER
 
     @property
     def TEMPLATE_ENGINE(self):

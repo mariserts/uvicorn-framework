@@ -6,8 +6,6 @@ from ..http.responses import (
     ServerErrorResponse
 )
 
-from .routes import route
-
 
 class Router:
 
@@ -16,9 +14,8 @@ class Router:
     def __init__(self):
         pass
 
-    def register(self, pattern, view, name):
-        _route = route(pattern, view, name)
-        self.routes[_route.get_pattern_as_string()] = _route
+    def register(self, route):
+        self.routes[route.get_pattern_as_string()] = route
 
     def get_route_for_path(self, path):
 
