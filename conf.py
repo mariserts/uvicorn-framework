@@ -1,20 +1,16 @@
 from uvicorn_framework.conf import Settings as UvicornFrameworkSettings
-from uvicorn_framework.routers import route
 
-from test_app.views import HomeViewSet, SlugViewSet, RedirectViewSet
+from uvicorn_framework_cms.conf import ROUTES as UFC_ROUTES
 
 
 class Settings(UvicornFrameworkSettings):
 
     APPS = [
-        'test_app',
+        'uvicorn_framework_cms',
     ]
 
-    ROUTES = [
-        route(r'/do/redirect/', RedirectViewSet, 'redirect'),
-        route(r'/(?P<slug>[a-z]+)/', SlugViewSet, 'slug'),
-        route(r'/', HomeViewSet, 'home')
-    ]
+    ROUTES = []
+    ROUTES += UFC_ROUTES
 
 
 settings = Settings()

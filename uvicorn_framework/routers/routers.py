@@ -3,6 +3,7 @@ import re
 from ..http.responses import (
     NotFoundResponse,
     NotImplementedResponse,
+    RouteNotFoundResponse,
     ServerErrorResponse
 )
 
@@ -33,7 +34,7 @@ class Router:
 
     def get_reponse(self, request, settings):
 
-        response = NotFoundResponse()
+        response = RouteNotFoundResponse()
 
         route = self.get_route_for_path(request.path)
 

@@ -3,7 +3,10 @@ from ..http.responses import NotImplementedResponse
 
 class Application:
 
-    def __init__(self, settings):
+    def __init__(
+        self,
+        settings
+    ):
         self.settings = settings
         self.set_routes()
 
@@ -23,6 +26,6 @@ class Application:
 class HttpApplication(Application):
 
     def response(self, scope, receive, send):
-        request = self.settings.REQUEST(scope, self.settings)
+        request = self.settings.REQUEST_CLASS(scope, self.settings)
         assert request.type == 'http'
         return self.settings.ROUTER.get_reponse(request, self.settings)

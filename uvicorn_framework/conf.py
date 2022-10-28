@@ -10,7 +10,6 @@ from .template_engines.template_engines import TemplateEngine
 
 class Settings:
 
-    __APPLICATION = None
     __DB_ENGINE = None
     __DB_SESSION = None
     __ROUTER = None
@@ -24,7 +23,7 @@ class Settings:
     DB_ENABLED = True
     DB_URL = 'sqlite://'
 
-    REQUEST = Request
+    REQUEST_CLASS = Request
 
     ROUTER_CLASS = Router
 
@@ -34,13 +33,6 @@ class Settings:
 
     TEMPLATES_DIR = 'templates'
     TEMPLATE_ENCODING = 'utf-8'
-
-    @property
-    def APPLICATION(self):
-        if self.__APPLICATION is not None:
-            return self.__APPLICATION
-        self.__APPLICATION = self.APPLICATION_CLASS(settings=self)
-        return self.__APPLICATION
 
     @property
     def DB_ENGINE(self):

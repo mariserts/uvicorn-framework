@@ -106,14 +106,20 @@ class TemplateResponse(Response):
 
 class NotFoundResponse(Response):
 
-    def __init__(self):
-        super().__init__(None, 'Not found', status=404)
+    def __init__(self, content='Not found'):
+        super().__init__(None, content, status=404)
 
 
 class NotImplementedResponse(Response):
 
     def __init__(self, content='Method not implemented'):
         super().__init__(None, content, status=501)
+
+
+class RouteNotFoundResponse(Response):
+
+    def __init__(self, content='Route not found'):
+        super().__init__(None, content, status=404)
 
 
 class ServerErrorResponse(Response):
