@@ -1,0 +1,8 @@
+TABLE_NAME_ITEMS = 'items'
+TABLE_NAME_PROJECT_ADMINS = 'project_admins'
+TABLE_NAME_PROJECT_TENANTS = 'project_tenants'
+TABLE_NAME_PROJECTS = 'projects'
+TABLE_NAME_TENANT_USERS = 'tenant_users'
+TABLE_NAME_TENANTS = 'tenants'
+TABLE_NAME_TRANSLATABLE_CONTENTS = 'translatable_contents'
+TABLE_NAME_USERS = 'users'
