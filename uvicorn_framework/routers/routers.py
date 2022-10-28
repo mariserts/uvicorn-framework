@@ -1,33 +1,12 @@
 import re
 
-from uvicorn_cms.core.responses import (
+from ..http.responses import (
     NotFoundResponse,
     NotImplementedResponse,
     ServerErrorResponse
 )
 
-
-class Route:
-
-    def __init__(self, pattern, view, name):
-        self._pattern = re.compile(pattern)
-        self._view = view
-        self._name = name
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def pattern(self):
-        return re.compile(self._pattern)
-
-    @property
-    def view(self):
-        return self._view
-
-    def get_pattern_as_string(self):
-        return self.pattern.pattern
+from .routes import route
 
 
 class Router:
@@ -38,8 +17,8 @@ class Router:
         pass
 
     def register(self, pattern, view, name):
-        route = Route(pattern, view, name)
-        self.routes[route.get_pattern_as_string()] = route
+        _route = route(pattern, view, name)
+        self.routes[_route.get_pattern_as_string()] = _route
 
     def get_route_for_path(self, path):
 
@@ -85,7 +64,3 @@ class Router:
                 return ServerErrorResponse()
 
         return response
-
-
-def route(pattern, view, name):
-    return Route(pattern, view, name)

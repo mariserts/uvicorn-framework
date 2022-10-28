@@ -1,5 +1,5 @@
-from uvicorn_app.http.responses import Response, TemplateResponse
-from uvicorn_app.viewsets.viewsets import ViewSet
+from uvicorn_framework.http.responses import RedirectResponse, Response, TemplateResponse
+from uvicorn_framework.viewsets import ViewSet
 
 
 class HomeViewSet(ViewSet):

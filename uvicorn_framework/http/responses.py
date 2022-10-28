@@ -26,7 +26,7 @@ class Response:
                 key.encode('utf-8', 'strict'),
                 value.encode('utf-8', 'strict')
             ])
-        return header
+        return headers
 
     @property
     def request(self):
@@ -112,11 +112,11 @@ class NotFoundResponse(Response):
 
 class NotImplementedResponse(Response):
 
-    def __init__(self):
-        super().__init__(None, 'Method not implemented', status=501)
+    def __init__(self, content='Method not implemented'):
+        super().__init__(None, content, status=501)
 
 
 class ServerErrorResponse(Response):
 
-    def __init__(self):
-        super().__init__(None, 'Server error', status=500)
+    def __init__(self, content='Server error'):
+        super().__init__(None, content, status=500)

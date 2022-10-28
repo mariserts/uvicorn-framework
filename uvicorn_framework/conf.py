@@ -3,8 +3,8 @@ from sqlalchemy.orm import sessionmaker
 
 from .database.models import Model
 from .http.requests import Request
-from .routers.routers import Router, route
-from .templates.template_engines import TemplateEngine
+from .routers import Router, route
+from .template_engines.template_engines import TemplateEngine
 
 
 class Settings:

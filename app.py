@@ -1,19 +1,9 @@
+from uvicorn_framework.applications import HttpApplication
+
 from conf import settings
 
 
 async def app(scope, receive, send):
-
-    # print(scope)
-
-    request = settings.REQUEST(scope, settings)
-    router = settings.ROUTER
-
-    # print(request.headers)
-
-    assert request.type == 'http'
-
-    response = router.get_reponse(request, settings)
-
-    await send(response.start)
-
-    await send(response.body)
+    application = HttpApplication(scope, receive, send, settings)
+    await send(application.response.start)
+    await send(application.response.body)

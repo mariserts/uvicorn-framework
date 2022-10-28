@@ -1,5 +1,5 @@
-from uvicorn_framework.conf import Settings as UvicornCmsSettings
-from uvicorn_framework.routers.routers import Router, route
+from uvicorn_framework.conf import Settings as UvicornFrameworkSettings
+from uvicorn_framework.routers import Router, route
 
 from test_app.views import HomeViewSet, SlugViewSet, RedirectViewSet
 
@@ -10,7 +10,7 @@ router.register(r'/(?P<slug>[a-z]+)/', SlugViewSet, 'slug')
 router.register(r'/', HomeViewSet, 'home')
 
 
-class Settings(UvicornCmsSettings):
+class Settings(UvicornFrameworkSettings):
 
     APPS = [
         'test_app',
