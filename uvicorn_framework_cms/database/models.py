@@ -17,7 +17,7 @@ class Session(CMSModel):
 
     __tablename__ = constants.TABLE_NAME_SESSIONS
 
-    id = Column(String, primary_key=True, server_default=str(uuid.uuid4()))
+    id = Column(String, primary_key=True, default=str(uuid.uuid4()))
     user_id = Column(Integer, nullable=True)
 
 
@@ -28,7 +28,7 @@ class User(CMSModel):
     id = Column(Integer, primary_key=True)
     email = Column(String)
     password = Column(String)
-    is_superuser = Column(Boolean, server_default=False)
+    is_superuser = Column(Boolean, default=False)
 
 
 class Project(CMSModel):
@@ -76,7 +76,7 @@ class TenantUser(CMSModel):
     __tablename__ = constants.TABLE_NAME_TENANT_USERS
 
     id = Column(Integer, primary_key=True)
-    acl = Column(String, nullable=True, server_default='user')
+    acl = Column(String, nullable=True, default='user')
 
     tenant_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_TENANTS}.id'))
     user_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_USERS}.id'))

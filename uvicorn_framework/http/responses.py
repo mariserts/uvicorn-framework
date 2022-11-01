@@ -1,5 +1,7 @@
 class Response:
 
+    _extra_headers = []
+
     encoding = 'utf-8'
     default_headers = [
         [
@@ -20,12 +22,17 @@ class Response:
 
     @property
     def headers(self):
+
         headers = self.default_headers
+
         for key, value in self._headers.items():
             headers.append([
                 key.encode('utf-8', 'strict'),
                 value.encode('utf-8', 'strict')
             ])
+
+        headers += self._extra_headers
+
         return headers
 
     @property
@@ -54,6 +61,15 @@ class Response:
         }
 
     # --
+
+    def set_cookie(self, key, value):
+
+        cookie_value = f'{key}={value}'
+
+        self._extra_headers.append([
+            'Set-Cookie'.encode('utf-8', 'strict'),
+            cookie_value.encode('utf-8', 'strict')
+        ])
 
     def get_body(self):
         return str.encode(self.content, self.encoding)

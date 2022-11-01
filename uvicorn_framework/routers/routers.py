@@ -79,7 +79,7 @@ class Router:
 
         else:
             try:
-                response = getattr(view, request.method)(request, **kwargs)
+                response = getattr(view(), request.method)(request, **kwargs)
             except Exception as e:
                 return ServerErrorResponse()
 

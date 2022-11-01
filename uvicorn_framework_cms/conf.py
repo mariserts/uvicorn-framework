@@ -1,10 +1,10 @@
 from uvicorn_framework.database.models import Model
 from uvicorn_framework.routers import route
 
-from .admin.viewsets.project_tenants_item import ProjectTenantItemViewSet
-from .admin.viewsets.project_tenants_items import ProjectTenantItemsViewSet
-from .admin.viewsets.project_tenants_user import ProjectTenantUserViewSet
-from .admin.viewsets.project_tenants_users import ProjectTenantUsersViewSet
+from .admin.viewsets.project_tenant_item import ProjectTenantItemViewSet
+from .admin.viewsets.project_tenant_items import ProjectTenantItemsViewSet
+from .admin.viewsets.project_tenant_user import ProjectTenantUserViewSet
+from .admin.viewsets.project_tenant_users import ProjectTenantUsersViewSet
 
 from .admin.viewsets.project_tenant import ProjectTenantViewSet
 from .admin.viewsets.project_tenants import ProjectTenantsViewSet
@@ -24,8 +24,12 @@ from .admin.viewsets.signout import SignOutViewSet
 from .database.models import CMSModel
 from .database.models import User
 
+from .http.requests import Request
+
 
 class Settings:
+
+    SESSION_COOKIE_NAME = 'session_id'
 
     def DB_MIGRATE(self, engine):
         CMSModel.metadata.create_all(engine.engine)
@@ -42,23 +46,25 @@ class Settings:
 
     def extend(self, base_settings):
 
+        base_settings.REQUEST_CLASS = Request
+
         base_settings.ROUTES += [
 
             # Project tenant users
             route(
-                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<id>[0-9]+)/users/(?P<id>[0-9]+)/',
+                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<tenant_id>[0-9]+)/users/(?P<id>[0-9]+)/',
                 ProjectTenantUserViewSet,
                 'cms_project_tenant_user'
             ),
             route(
-                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<id>[0-9]+)/users/',
+                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<tenant_id>[0-9]+)/users/',
                 ProjectTenantUsersViewSet,
                 'cms_project_tenant_users'
             ),
 
             # Project tenants items
             route(
-                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<tenant_id>[0-9]+)/(?P<ct_name>[0-9a-zA-Z\-\_]+))/(?P<id>[0-9]+)/',
+                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<tenant_id>[0-9]+)/(?P<ct_name>[0-9a-zA-Z\-\_]+)/(?P<id>[0-9]+)/',
                 ProjectTenantItemViewSet,
                 'cms_project_tenant_item'
             ),
@@ -129,7 +135,7 @@ class Settings:
             ),
         ]
 
-        base_settings.SESSION_COOKIE_NAME = 'session_id'
+        base_settings.SESSION_COOKIE_NAME = self.SESSION_COOKIE_NAME
 
 
 settings = Settings()
