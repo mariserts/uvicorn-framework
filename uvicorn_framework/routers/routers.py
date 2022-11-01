@@ -10,39 +10,61 @@ from ..http.responses import (
 
 class Router:
 
-    routes = {}
+    __unset_cache_value = '-1'
+    __cache_paths = {}
+    routes = []
 
     def __init__(self):
         pass
 
+    def get_cached_route(self, path):
+        return self.__cache_paths.get(path, self.__unset_cache_value)
+
+    def set_cached_route(self, path, data):
+        self.__cache_paths[path] = data
+
     def register(self, route):
-        self.routes[route.get_pattern_as_string()] = route
+        self.routes.append(route)
 
     def get_route_for_path(self, path):
 
-        for key, item in self.routes.items():
+        if path.endswith('/') is False:
+            path += '/'
 
-            match = re.fullmatch(item.pattern, path)
-            if match is not None:
-                kwargs_match = re.search(item.pattern, path)
-                return {
-                    'view': item.view,
-                    'kwargs': match.groupdict(),
-                }
+        cached_data = self.get_cached_route(path)
+        if cached_data is None:
+            return cached_data
 
-        return None
+        if cached_data == self.__unset_cache_value:
+
+            cached_data = None
+
+            for route in self.routes:
+
+                match = re.fullmatch(route.pattern, path)
+                if match is not None:
+                    kwargs_match = re.search(route.pattern, path)
+                    cached_data = {
+                        'route': route,
+                        'kwargs': match.groupdict(),
+                    }
+                    break
+
+            self.set_cached_route(path, cached_data)
+
+        return cached_data
 
     def get_reponse(self, request, settings):
 
-        response = RouteNotFoundResponse()
+        data = self.get_route_for_path(request.path)
 
-        route = self.get_route_for_path(request.path)
+        if data is None:
+            return RouteNotFoundResponse()
 
-        if route is None:
-            return response
+        route = data['route']
+        kwargs = data['kwargs']
 
-        view = route['view']
-        kwargs = route['kwargs']
+        view = route.view
 
         if request.method not in view.HTTP_METHODS:
             return NotImplementedResponse()

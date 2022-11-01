@@ -8,4 +8,7 @@ class Model(Base):
 
     __abstract__ = True
 
-    CASCADE_REMOVE_ALL = 'all, delete, delete-orphan'
+    CASCADE_ALL = 'all'
+    CASCADE_DELETE = 'delete'
+    CASCADE_DELETE_ORPHAN = 'delete-orphan'
+    CASCADE = f'{CASCADE_ALL}, {CASCADE_DELETE}, {CASCADE_DELETE_ORPHAN}'

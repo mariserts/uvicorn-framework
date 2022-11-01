@@ -2,18 +2,16 @@ from uvicorn_framework.http.responses import RedirectResponse, Response, Templat
 from uvicorn_framework.viewsets import ViewSet
 
 
-class HomeViewSet(ViewSet):
-
-    def get(self, request):
-        return Response(request, 'HOME')
-
-
-class LogInViewSet(ViewSet):
+class RegisterViewSet(ViewSet):
 
     template = 'uvicorn_framework_cms/admin/base.html'
 
     def get(self, request):
-        return TemplateResponse(request, self.template, context=self.get_context())
+        return TemplateResponse(
+            request,
+            self.template,
+            context=self.get_context()
+        )
 
     def post(self, request):
         return RedirectResponse('/')

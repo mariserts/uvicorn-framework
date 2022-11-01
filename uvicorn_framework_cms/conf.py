@@ -1,9 +1,135 @@
+from uvicorn_framework.database.models import Model
 from uvicorn_framework.routers import route
 
-from .admin.views import HomeViewSet, LogInViewSet
+from .admin.viewsets.project_tenants_item import ProjectTenantItemViewSet
+from .admin.viewsets.project_tenants_items import ProjectTenantItemsViewSet
+from .admin.viewsets.project_tenants_user import ProjectTenantUserViewSet
+from .admin.viewsets.project_tenants_users import ProjectTenantUsersViewSet
+
+from .admin.viewsets.project_tenant import ProjectTenantViewSet
+from .admin.viewsets.project_tenants import ProjectTenantsViewSet
+
+from .admin.viewsets.project import ProjectViewSet
+from .admin.viewsets.projects import ProjectsViewSet
+
+from .admin.viewsets.tenant import TenantViewSet
+from .admin.viewsets.tenants import TenantsViewSet
+
+from .admin.viewsets.profile import ProfileViewSet
+
+from .admin.viewsets.register import RegisterViewSet
+from .admin.viewsets.signin import SignInViewSet
+from .admin.viewsets.signout import SignOutViewSet
+
+from .database.models import CMSModel
+from .database.models import User
 
 
-ROUTES = [
-    route(r'/sign-in/', LogInViewSet, 'sign_in'),
-    route(r'/', HomeViewSet, 'home'),
-]
+class Settings:
+
+    def DB_MIGRATE(self, engine):
+        CMSModel.metadata.create_all(engine.engine)
+
+    def CREATE_SUPERUSER(self, cursor, email, password):
+        user = self.CREATE_USER(cursor, email, password, True)
+        return user
+
+    def CREATE_USER(self, cursor, email, password, is_superuser=False):
+        user = User(email=email, password=password, is_superuser=is_superuser)
+        cursor.add(user)
+        cursor.commit()
+        return user
+
+    def extend(self, base_settings):
+
+        base_settings.ROUTES += [
+
+            # Project tenant users
+            route(
+                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<id>[0-9]+)/users/(?P<id>[0-9]+)/',
+                ProjectTenantUserViewSet,
+                'cms_project_tenant_user'
+            ),
+            route(
+                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<id>[0-9]+)/users/',
+                ProjectTenantUsersViewSet,
+                'cms_project_tenant_users'
+            ),
+
+            # Project tenants items
+            route(
+                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<tenant_id>[0-9]+)/(?P<ct_name>[0-9a-zA-Z\-\_]+))/(?P<id>[0-9]+)/',
+                ProjectTenantItemViewSet,
+                'cms_project_tenant_item'
+            ),
+            route(
+                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<tenant_id>[0-9]+)/(?P<ct_name>[0-9a-zA-Z\-\_]+)/',
+                ProjectTenantItemsViewSet,
+                'cms_project_tenant_items'
+            ),
+
+            # Project tenants
+            route(
+                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/(?P<id>[0-9]+)/',
+                ProjectTenantViewSet,
+                'cms_project_tenant'
+            ),
+            route(
+                r'/cms/projects/(?P<project_id>[0-9]+)/tenants/',
+                ProjectTenantsViewSet,
+                'cms_project_tenants'
+            ),
+
+            # Projects
+            route(
+                r'/cms/projects/(?P<id>[0-9]+)/',
+                ProjectViewSet,
+                'cms_project'
+            ),
+            route(
+                r'/cms/projects/',
+                ProjectsViewSet,
+                'cms_projects'
+            ),
+
+            # Tenants
+            route(
+                r'/cms/tenants/(?P<id>[0-9]+)/',
+                TenantViewSet,
+                'cms_tenant'
+            ),
+            route(
+                r'/cms/tenants/',
+                TenantsViewSet,
+                'cms_tenants'
+            ),
+
+            # Profile
+            route(
+                r'/cms/profile/',
+                ProfileViewSet,
+                'cms_user_profile'
+            ),
+
+            # Auth
+            route(
+                r'/cms/sign-out/',
+                SignOutViewSet,
+                'sign_out'
+            ),
+            route(
+                r'/cms/register/',
+                RegisterViewSet,
+                'cms_register'
+            ),
+            route(
+                r'/cms/',
+                SignInViewSet,
+                'sign_in'
+            ),
+        ]
+
+        base_settings.SESSION_COOKIE_NAME = 'session_id'
+
+
+settings = Settings()

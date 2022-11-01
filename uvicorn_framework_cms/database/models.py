@@ -1,4 +1,6 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+import uuid
+
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 
 from uvicorn_framework.database.models import Model
@@ -6,30 +8,44 @@ from uvicorn_framework.database.models import Model
 from .. import constants
 
 
-class User(Model):
+class CMSModel(Model):
+
+    __abstract__ = True
+
+
+class Session(CMSModel):
+
+    __tablename__ = constants.TABLE_NAME_SESSIONS
+
+    id = Column(String, primary_key=True, server_default=str(uuid.uuid4()))
+    user_id = Column(Integer, nullable=True)
+
+
+class User(CMSModel):
 
     __tablename__ = constants.TABLE_NAME_USERS
 
     id = Column(Integer, primary_key=True)
     email = Column(String)
     password = Column(String)
+    is_superuser = Column(Boolean, server_default=False)
 
 
-class Project(Model):
+class Project(CMSModel):
 
     __tablename__ = constants.TABLE_NAME_PROJECTS
 
     id = Column(Integer, primary_key=True)
 
 
-class Tenant(Model):
+class Tenant(CMSModel):
 
     __tablename__ = constants.TABLE_NAME_TENANTS
 
     id = Column(Integer, primary_key=True)
 
 
-class ProjectAdmin(Model):
+class ProjectAdmin(CMSModel):
 
     __tablename__ = constants.TABLE_NAME_PROJECT_ADMINS
 
@@ -38,24 +54,24 @@ class ProjectAdmin(Model):
     project_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_PROJECTS}.id'))
     user_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_USERS}.id'))
 
-    project = relationship('Project', back_populates='admins', cascade=Model.CASCADE_REMOVE_ALL)
-    user = relationship('User', back_populates='projects', cascade=Model.CASCADE_REMOVE_ALL)
+    project = relationship('Project', foreign_keys='ProjectAdmin.project_id')
+    user = relationship('User', foreign_keys='ProjectAdmin.user_id')
 
 
-class ProjectTenant(Model):
+class ProjectTenant(CMSModel):
 
-    __tablename__ = constants.TABLE_NAME_PROJECT_TENATS
+    __tablename__ = constants.TABLE_NAME_PROJECT_TENANTS
 
     id = Column(Integer, primary_key=True)
 
     project_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_PROJECTS}.id'))
     tenant_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_TENANTS}.id'))
 
-    project = relationship('Project', back_populates='tenants', cascade=Model.CASCADE_REMOVE_ALL)
-    tenant = relationship('Tenant', back_populates='projects', cascade=Model.CASCADE_REMOVE_ALL)
+    project = relationship('Project', foreign_keys='ProjectTenant.project_id')
+    tenant = relationship('Tenant', foreign_keys='ProjectTenant.tenant_id')
 
 
-class TenantUser(Model):
+class TenantUser(CMSModel):
 
     __tablename__ = constants.TABLE_NAME_TENANT_USERS
 
@@ -65,11 +81,11 @@ class TenantUser(Model):
     tenant_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_TENANTS}.id'))
     user_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_USERS}.id'))
 
-    tenant = relationship('Tenant', back_populates='users', cascade=Model.CASCADE_REMOVE_ALL)
-    user = relationship('User', back_populates='tenants', cascade=Model.CASCADE_REMOVE_ALL)
+    tenant = relationship('Tenant', foreign_keys='TenantUser.tenant_id')
+    user = relationship('User', foreign_keys='TenantUser.user_id')
 
 
-class Item(Model):
+class Item(CMSModel):
 
     __tablename__ = constants.TABLE_NAME_ITEMS
 
@@ -79,15 +95,15 @@ class Item(Model):
     project_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_PROJECTS}.id'))
     tenant_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_TENANTS}.id'))
 
-    project = relationship('Project', back_populates='items', cascade=Model.CASCADE_REMOVE_ALL)
-    tenant = relationship('Tenant', back_populates='items', cascade=Model.CASCADE_REMOVE_ALL)
+    project = relationship('Project', foreign_keys='Item.project_id')
+    tenant = relationship('Tenant', foreign_keys='Item.tenant_id')
 
 
-class Content(Model):
+class Content(CMSModel):
 
     __tablename__ = constants.TABLE_NAME_TRANSLATABLE_CONTENTS
 
     id = Column(Integer, primary_key=True)
     item_id = Column(Integer, ForeignKey(f'{constants.TABLE_NAME_ITEMS}.id'))
 
-    item = relationship('Item', back_populates='translatable_contents', cascade=Model.CASCADE_REMOVE_ALL)
+    item = relationship('Item', foreign_keys='Content.item_id')

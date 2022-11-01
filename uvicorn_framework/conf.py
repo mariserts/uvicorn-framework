@@ -1,7 +1,7 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import os
 
 from .applications import HttpApplication
+from .database.engines.sqlite import SqliteDatabaseEngine
 from .database.models import Model
 from .http.requests import Request
 from .routers import Router, route
@@ -18,10 +18,13 @@ class Settings:
     APPLICATION_CLASS = HttpApplication
     APPS = []
 
+    DB_ENABLED = True
+    DB_ENGINE_CLASS = SqliteDatabaseEngine
+    DB_URL = 'sqlite:///db.sqlite3'
+
     DEBUG = True
 
-    DB_ENABLED = True
-    DB_URL = 'sqlite://'
+    DIR =  os.path.dirname(os.path.abspath(__file__))
 
     REQUEST_CLASS = Request
 
@@ -31,25 +34,19 @@ class Settings:
 
     SECRET_KEY = 'test'
 
-    TEMPLATES_DIR = 'templates'
+    TEMPLATE_ENGINE_CLASS = TemplateEngine
     TEMPLATE_ENCODING = 'utf-8'
+    TEMPLATES_DIR = 'templates'
 
     @property
     def DB_ENGINE(self):
         if self.__DB_ENGINE is not None:
             return self.__DB_ENGINE
-        self.__DB_ENGINE = create_engine(self.DB_URL, echo=True)
+        self.__DB_ENGINE = self.DB_ENGINE_CLASS(self)
         return self.__DB_ENGINE
 
-    @property
-    def DB_CURSOR(self):
-        if self.__DB_SESSION is not None:
-            return self.__DB_SESSION
-        self.__DB_SESSION = sessionmaker(bind=self.DB_ENGINE)
-        return self.__DB_SESSION
-
     def DB_MIGRATE(self):
-        Model.metadata.create_all(self.DB_ENGINE)
+        Model.metadata.create_all(self.DB_ENGINE.engine)
 
     @property
     def ROUTER(self):
@@ -62,7 +59,7 @@ class Settings:
     def TEMPLATE_ENGINE(self):
         if self.__TEMPLATE_ENGINE is not None:
             return self.__TEMPLATE_ENGINE
-        self.__TEMPLATE_ENGINE = TemplateEngine(self)
+        self.__TEMPLATE_ENGINE = self.TEMPLATE_ENGINE_CLASS(self)
         return self.__TEMPLATE_ENGINE
 
 
