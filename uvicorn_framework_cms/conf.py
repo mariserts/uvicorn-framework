@@ -18,8 +18,8 @@ from .admin.viewsets.tenants import TenantsViewSet
 from .admin.viewsets.profile import ProfileViewSet
 
 from .admin.viewsets.register import RegisterViewSet
-from .admin.viewsets.signin import SignInViewSet
-from .admin.viewsets.signout import SignOutViewSet
+from .admin.viewsets.sign_in import SignInViewSet
+from .admin.viewsets.sign_out import SignOutViewSet
 
 from .database.models import CMSModel
 from .database.models import User

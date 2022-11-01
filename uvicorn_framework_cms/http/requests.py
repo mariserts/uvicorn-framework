@@ -26,13 +26,13 @@ class Request(UFRequest):
         if session_id is None:
             return None
 
-        session = self.settings.DB_ENGINE.cursor(Session).filter(
+        session = self.settings.DB_ENGINE.cursor.query(Session).filter(
             id=session_id
         ).first()
 
         if session is None:
             return None
 
-        return self.settings.DB_ENGINE.cursor(User).filter(
+        return self.settings.DB_ENGINE.cursor.query(User).filter(
             id=session.user_id
         ).first()

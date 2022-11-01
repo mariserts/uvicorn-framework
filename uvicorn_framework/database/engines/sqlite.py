@@ -8,6 +8,7 @@ from .base import DatabaseEngine
 
 class SqliteDatabaseEngine(DatabaseEngine):
 
+    __cursor = None
     __engine = None
     __session = None
 
@@ -15,11 +16,11 @@ class SqliteDatabaseEngine(DatabaseEngine):
 
     @property
     def cursor(self):
-        if self.__session is not None:
-            return self.__session
+        if self.__cursor is not None:
+            return self.__cursor
         Session = sessionmaker(bind=self.engine)
-        self.__session = Session()
-        return self.__session
+        self.__cursor = Session()
+        return self.__cursor
 
     @property
     def engine(self):

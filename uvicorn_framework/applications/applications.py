@@ -11,9 +11,22 @@ class Application:
         self.set_routes()
 
     async def __call__(self, scope, receive, send):
-        response = self.response(scope, receive, send)
-        await send(response.start)
-        await send(response.body)
+        message = await receive()
+        print('(%s) message from  recv is %r' % (id(self),message))
+        if message['type'] == 'lifespan.startup':
+            await send({'type': 'lifespan.startup.complete'})
+        elif message['type'] == 'lifespan.shutdown':
+            await send({'type': 'lifespan.shutdown.complete'})
+            return
+
+        if message["type"] == "http.disconnect":
+            return
+        else:
+            if not message.get("more_body"):
+                body = message.get('body', b'')
+                response = self.response(scope, body, send)
+                await send(response.start)
+                await send(response.body)
 
     def response(self, scope, receive, send):
         return NotImplementedResponse()
@@ -26,6 +39,6 @@ class Application:
 class HttpApplication(Application):
 
     def response(self, scope, receive, send):
-        request = self.settings.REQUEST_CLASS(scope, self.settings)
+        request = self.settings.REQUEST_CLASS(scope, receive, self.settings)
         assert request.type == 'http'
         return self.settings.ROUTER.get_reponse(request, self.settings)

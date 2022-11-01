@@ -1,15 +1,37 @@
+import urllib
+
+
 class Request:
 
+    encoding = 'utf-8'
+
+    __body = None
     __cookies = None
 
-    def __init__(self, scope, settings):
-
-        print(scope)
-
+    def __init__(self, scope, body, settings):
         self._scope = scope
+        self._body = body
         self._settings = settings
 
-        print(self.cookies)
+    @property
+    def body(self):
+
+        if self.__body is not None:
+            return self.__body
+
+        decoded_body = self._body.decode(self.encoding, 'strict')
+        clean_string = urllib.parse.unquote(decoded_body)
+
+        out = {}
+
+        for value in clean_string.split('&'):
+            if '=' in value:
+                parts = value.split('=')
+                out[parts[0]] = parts[1]
+
+        self.__body = out
+
+        return self.__body
 
     @property
     def headers(self):
@@ -41,8 +63,9 @@ class Request:
         cookies = {}
 
         for cookie in _cookies:
-            parts = cookie.split('=')
-            cookies[parts[0].strip()] = parts[1].strip()
+            if '=' in cookie:
+                parts = cookie.split('=')
+                cookies[parts[0].strip()] = parts[1].strip()
 
         self.__cookies = cookies
 
