@@ -13,15 +13,15 @@ class SignInViewSet(ViewSet):
     template = 'uvicorn_framework_cms/admin/pages/sign_in.html'
 
     def get(self, request):
-
-        print(reverse(constants.URLNAME_CMS_SIGN_IN))
-
-        context = self.get_context()
-        context['request'] = request
-        return TemplateResponse(request, self.template, context=context)
+        return TemplateResponse(
+            request,
+            self.template,
+            context=self.get_context()
+        )
 
     def post(self, request):
 
+        redirect_to = request.body.get('redirect_to', None)
         email = request.body['email']
         password = request.body['password']
 
@@ -30,7 +30,10 @@ class SignInViewSet(ViewSet):
             password,
         )
 
-        response = RedirectResponse('/cms/')
+        if redirect_to is None:
+            redirect_to = reverse(constants.URLNAME_CMS_PROJECTS)
+
+        response = RedirectResponse(redirect_to)
 
         if session is not None:
             response.set_cookie(
@@ -39,6 +42,3 @@ class SignInViewSet(ViewSet):
             )
 
         return response
-
-    def get_context(self):
-        return {}

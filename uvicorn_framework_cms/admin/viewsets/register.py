@@ -13,14 +13,10 @@ class RegisterViewSet(ViewSet):
     template = 'uvicorn_framework_cms/admin/pages/register.html'
 
     def get(self, request):
-
-        context = self.get_context()
-        context['request'] = request
-
         return TemplateResponse(
             request,
             self.template,
-            context=context
+            context=self.get_context()
         )
 
     def post(self, request):
@@ -42,6 +38,3 @@ class RegisterViewSet(ViewSet):
         user = register(email, password)
 
         return RedirectResponse('/cms/')
-
-    def get_context(self):
-        return {}

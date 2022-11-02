@@ -48,8 +48,16 @@ class Settings:
 
     def extend(self, base_settings):
 
+        # Add template extensions
+        base_settings.TEMPLATE_ENGINE.environment.add_extension(
+            'uvicorn_framework_cms.template_extensions.uvicorn_framework_cms_extensions.MainMenuExtension'
+        )
+
+        # Override request
         base_settings.REQUEST_CLASS = Request
 
+
+        # Append routes
         base_settings.ROUTES += [
 
             # Project tenant users
@@ -97,7 +105,7 @@ class Settings:
             route(
                 r'/cms/projects/',
                 ProjectsViewSet,
-                'cms_projects'
+                constants.URLNAME_CMS_PROJECTS
             ),
 
             # Tenants
@@ -137,6 +145,7 @@ class Settings:
             ),
         ]
 
+        # Add session cookie name
         base_settings.SESSION_COOKIE_NAME = self.SESSION_COOKIE_NAME
 
 

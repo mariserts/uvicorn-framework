@@ -8,5 +8,10 @@ class ViewSet:
         HTTP_METHOD_POST,
     ]
 
-    def __init__(self):
-        pass
+    def __init__(self, request):
+        self.request = request
+
+    def get_context(self):
+        return {
+            'request': self.request
+        }

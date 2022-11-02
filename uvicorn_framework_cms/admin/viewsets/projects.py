@@ -4,7 +4,7 @@ from uvicorn_framework.viewsets import ViewSet
 
 class ProjectsViewSet(ViewSet):
 
-    template = 'uvicorn_framework_cms/admin/base.html'
+    template = 'uvicorn_framework_cms/admin/pages/projects.html'
 
     def get(self, request):
         return TemplateResponse(
@@ -16,6 +16,3 @@ class ProjectsViewSet(ViewSet):
     def post(self, request):
         # Add new project
         return RedirectResponse('/')
-
-    def get_context(self):
-        return {}

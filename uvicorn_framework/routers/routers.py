@@ -81,11 +81,13 @@ class Router:
             return NotImplementedResponse()
 
         if getattr(settings, 'DEBUG', True) is True:
-            response = getattr(view(), request.method)(request, **kwargs)
+            response = getattr(
+                view(request), request.method)(request, **kwargs)
 
         else:
             try:
-                response = getattr(view(), request.method)(request, **kwargs)
+                response = getattr(
+                    view(request), request.method)(request, **kwargs)
             except Exception as e:
                 return ServerErrorResponse()
 
