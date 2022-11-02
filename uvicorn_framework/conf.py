@@ -1,6 +1,5 @@
 import os
 
-from .applications import HttpApplication
 from .database.engines.sqlite import SqliteDatabaseEngine
 from .database.models import Model
 from .http.requests import Request
@@ -15,7 +14,6 @@ class Settings:
     __ROUTER = None
     __TEMPLATE_ENGINE = None
 
-    APPLICATION_CLASS = HttpApplication
     APPS = []
 
     DB_ENABLED = True

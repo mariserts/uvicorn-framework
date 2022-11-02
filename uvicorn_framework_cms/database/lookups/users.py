@@ -1,20 +1,17 @@
+from uvicorn_framework.conf import settings
+
+from ...cryptography import hash_password
+
 from ..models import User
 
 
-def hash_password(password):
-    return password
-
-
-def password_matches(password, hashed_password):
-    return hash_password(password) == hashed_password
-
-
 def create_user(
-        cursor,
         email,
         password,
         is_superuser=False
     ):
+
+    cursor = settings.DB_ENGINE.cursor
 
     user = User(
         email=email,
@@ -29,11 +26,12 @@ def create_user(
 
 
 def update_user(
-        cursor,
         id,
         password=None,
         is_superuser=False
     ):
+
+    cursor = settings.DB_ENGINE.cursor
 
     user = cursor.query(User).filter_by(id=id).first()
 
@@ -56,11 +54,12 @@ def update_user(
 
 
 def get_user(
-        cursor,
         id=None,
         email=None,
         is_superuser=None
     ):
+
+    cursor = settings.DB_ENGINE.cursor
 
     condition_kwargs = {}
 
@@ -73,6 +72,4 @@ def get_user(
     if is_superuser is not None:
         condition_kwargs['is_superuser'] = is_superuser
 
-    user = cursor.query(User).filter_by(**condition_kwargs).first()
-
-    return user
+    return cursor.query(User).filter_by(**condition_kwargs).first()

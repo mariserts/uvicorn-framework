@@ -1,12 +1,10 @@
+from ..conf import settings
 from ..http.responses import NotImplementedResponse
 
 
 class Application:
 
-    def __init__(
-        self,
-        settings
-    ):
+    def __init__(self, settings=settings):
         self.settings = settings
         self.set_routes()
 

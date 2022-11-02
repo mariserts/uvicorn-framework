@@ -1,12 +1,11 @@
 import os
 
-from uvicorn_framework.conf import Settings as UvicornFrameworkSettings
+from uvicorn_framework.conf import settings
 
-from uvicorn_framework_cms.conf import settings as UFCSettings
-from uvicorn_framework_cms.database.models import User
+from uvicorn_framework_cms.conf import Settings as UFCSettings
 
 
-class Settings(UvicornFrameworkSettings):
+class Settings:
 
     APPS = [
         'uvicorn_framework_cms',
@@ -20,8 +19,12 @@ class Settings(UvicornFrameworkSettings):
         super().DB_MIGRATE()
         UFCSettings.DB_MIGRATE(self.DB_ENGINE)
 
+    def extend(self, base_settings):
+        base_settings.APPS = self.APPS
+        base_settings.DIR = self.DIR
+        base_settings.ROUTES = self.ROUTES
+        base_settings.DB_MIGRATE = self.DB_MIGRATE
 
-settings = Settings()
 
-
-UFCSettings.extend(settings)
+Settings().extend(settings)
+UFCSettings().extend(settings)

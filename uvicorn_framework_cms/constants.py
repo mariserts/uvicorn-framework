@@ -7,3 +7,9 @@ TABLE_NAME_TENANT_USERS = 'tenant_users'
 TABLE_NAME_TENANTS = 'tenants'
 TABLE_NAME_TRANSLATABLE_CONTENTS = 'translatable_contents'
 TABLE_NAME_USERS = 'users'
+
+
+URLNAME_CMS_REGISTER = 'cms_register'
+URLNAME_CMS_SIGN_IN = 'cms_sign_in'
+URLNAME_CMS_SIGN_OUT = 'cms_sign_out'
+URLNAME_CMS_TENANT = 'cms_tenant'

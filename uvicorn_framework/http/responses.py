@@ -62,9 +62,41 @@ class Response:
 
     # --
 
-    def set_cookie(self, key, value):
+    def set_cookie(
+            self,
+            key,
+            value,
+            max_age=None,
+            expires=None,
+            domain=None,
+            path='/',
+            secure=True,
+            http_only=True,
+            same_site=None,
+        ):
 
         cookie_value = f'{key}={value}'
+
+        if max_age is not None:
+            cookie_value += f'; Max-Age={max_age}'
+
+        if expires is not None:
+            cookie_value += f'; Expires={expires}'
+
+        if domain is not None:
+            cookie_value += f'; Domain={domain}'
+
+        if path is not None:
+            cookie_value += f'; Path={path}'
+
+        if same_site is not None:
+            cookie_value += f'; SameSite={same_site}'
+
+        if secure is True:
+            cookie_value += f'; Secure'
+
+        if http_only is True:
+            cookie_value += f'; HttpOnly'
 
         self._extra_headers.append([
             'Set-Cookie'.encode('utf-8', 'strict'),

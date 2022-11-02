@@ -1,4 +1,5 @@
+from uvicorn_framework.applications import HttpApplication
 from conf import settings
 
 
-app = settings.APPLICATION_CLASS(settings)
+app = HttpApplication()

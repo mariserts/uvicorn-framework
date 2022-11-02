@@ -21,6 +21,8 @@ from .admin.viewsets.register import RegisterViewSet
 from .admin.viewsets.sign_in import SignInViewSet
 from .admin.viewsets.sign_out import SignOutViewSet
 
+from . import constants
+
 from .database.models import CMSModel
 from .database.models import User
 
@@ -102,7 +104,7 @@ class Settings:
             route(
                 r'/cms/tenants/(?P<id>[0-9]+)/',
                 TenantViewSet,
-                'cms_tenant'
+                constants.URLNAME_CMS_TENANT
             ),
             route(
                 r'/cms/tenants/',
@@ -121,17 +123,17 @@ class Settings:
             route(
                 r'/cms/sign-out/',
                 SignOutViewSet,
-                'sign_out'
+                constants.URLNAME_CMS_SIGN_OUT
             ),
             route(
                 r'/cms/register/',
                 RegisterViewSet,
-                'cms_register'
+                constants.URLNAME_CMS_REGISTER
             ),
             route(
                 r'/cms/',
                 SignInViewSet,
-                'sign_in'
+                constants.URLNAME_CMS_SIGN_IN
             ),
         ]
 

@@ -26,6 +26,12 @@ class Router:
     def register(self, route):
         self.routes.append(route)
 
+    def reverse(self, name, kwargs):
+        for route in self.routes:
+            if route.name == name:
+                return route.reverse(kwargs)
+        raise Exception(f'Route not found for name "{name}"')
+
     def get_route_for_path(self, path):
 
         if path.endswith('/') is False:
