@@ -1,5 +1,8 @@
 class DatabaseEngine:
 
+    __engine = None
+    __session = None
+
     def __init__(self, settings, *args, **kwargs):
         self.settings = settings
         self.args = args
@@ -8,11 +11,11 @@ class DatabaseEngine:
 
     @property
     def engine(self):
-        return None
+        raise NotImplemented()
 
     @property
-    def cursor(self):
-        return None
+    def session(self):
+        raise NotImplemented()
 
     def setup(self):
         pass

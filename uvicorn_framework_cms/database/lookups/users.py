@@ -2,7 +2,8 @@ from uvicorn_framework.conf import settings
 
 from ...cryptography import hash_password
 
-from ..models import User
+from ..models import UserModel
+from ..serializers.users import UserSerializer
 
 
 def create_user(
@@ -11,16 +12,26 @@ def create_user(
         is_superuser=False
     ):
 
-    cursor = settings.DB_ENGINE.cursor
+    user = None
+    Session = settings.DB_ENGINE.session
 
-    user = User(
-        email=email,
-        password=hash_password(password),
-        is_superuser=is_superuser
-    )
+    with Session() as cursor:
 
-    cursor.add(user)
-    cursor.commit()
+        user = UserModel(
+            email=email,
+            password=hash_password(password),
+            is_superuser=is_superuser
+        )
+
+        cursor.add(user)
+        cursor.commit()
+
+        user = UserSerializer(
+            id=user.id,
+            email=user.email,
+            password=user.password,
+            is_superuser=user.is_superuser
+        )
 
     return user
 
@@ -31,24 +42,33 @@ def update_user(
         is_superuser=False
     ):
 
-    cursor = settings.DB_ENGINE.cursor
+    user = None
+    Session = settings.DB_ENGINE.session
 
-    user = cursor.query(User).filter_by(id=id).first()
+    with Session() as cursor:
 
-    if user is None:
-        raise Exception('User not found')
+        user = cursor.query(UserModel).filter_by(id=id).first()
+        if user is None:
+            raise Exception('User not found')
 
-    update_kwargs = {}
+        update_kwargs = {}
 
-    if password is not None:
-        update_kwargs['password'] = hash_password(password)
+        if password is not None:
+            update_kwargs['password'] = hash_password(password)
 
-    if id is not None:
-        update_kwargs['is_superuser'] = is_superuser
+        if id is not None:
+            update_kwargs['is_superuser'] = is_superuser
 
-    user.update(update_kwargs)
+        user.update(update_kwargs)
 
-    cursor.commit()
+        cursor.commit()
+
+        user = UserSerializer(
+            id=user.id,
+            email=user.email,
+            password=user.password,
+            is_superuser=user.is_superuser
+        )
 
     return user
 
@@ -59,17 +79,32 @@ def get_user(
         is_superuser=None
     ):
 
-    cursor = settings.DB_ENGINE.cursor
+    user = None
+    Session = settings.DB_ENGINE.session
 
-    condition_kwargs = {}
+    with Session() as cursor:
 
-    if id is not None:
-        condition_kwargs['id'] = id
+        condition_kwargs = {}
 
-    if email is not None:
-        condition_kwargs['email'] = email
+        if id is not None:
+            condition_kwargs['id'] = id
 
-    if is_superuser is not None:
-        condition_kwargs['is_superuser'] = is_superuser
+        if email is not None:
+            condition_kwargs['email'] = email
 
-    return cursor.query(User).filter_by(**condition_kwargs).first()
+        if is_superuser is not None:
+            condition_kwargs['is_superuser'] = is_superuser
+
+        user = cursor.query(UserModel).filter_by(**condition_kwargs).first()
+
+        if user is None:
+            return None
+
+        user = UserSerializer(
+            id=user.id,
+            email=user.email,
+            password=user.password,
+            is_superuser=user.is_superuser
+        )
+
+    return user

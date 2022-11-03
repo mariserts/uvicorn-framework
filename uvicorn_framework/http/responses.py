@@ -1,7 +1,5 @@
 class Response:
 
-    _extra_headers = []
-
     encoding = 'utf-8'
     default_headers = [
         [
@@ -14,7 +12,7 @@ class Response:
         self._request = request
         self._content = content
         self._status = status
-        self._headers = headers
+        self._headers = self.parse_headers(headers)
 
     @property
     def content(self):
@@ -22,18 +20,7 @@ class Response:
 
     @property
     def headers(self):
-
-        headers = self.default_headers
-
-        for key, value in self._headers.items():
-            headers.append([
-                key.encode('utf-8', 'strict'),
-                value.encode('utf-8', 'strict')
-            ])
-
-        headers += self._extra_headers
-
-        return headers
+        return self._headers
 
     @property
     def request(self):
@@ -59,6 +46,21 @@ class Response:
             'type': 'http.response.body',
             'body': self.get_body(),
         }
+
+    # --
+
+    def parse_headers(self, headers_dict):
+
+        headers = []
+        headers += self.get_default_headers()
+
+        for key, value in headers_dict.items():
+            headers.append([
+                key.encode('utf-8', 'strict'),
+                value.encode('utf-8', 'strict')
+            ])
+
+        return headers
 
     # --
 
@@ -98,13 +100,16 @@ class Response:
         if http_only is True:
             cookie_value += f'; HttpOnly'
 
-        self._extra_headers.append([
+        self._headers.append([
             'Set-Cookie'.encode('utf-8', 'strict'),
             cookie_value.encode('utf-8', 'strict')
         ])
 
     def get_body(self):
         return str.encode(self.content, self.encoding)
+
+    def get_default_headers(self):
+        return self.default_headers
 
 
 class RedirectResponse(Response):
@@ -113,11 +118,12 @@ class RedirectResponse(Response):
         self._url = url
         self._permanent = permanent
         self._status = 302
+
         if self._permanent is True:
             self._status = 301
 
         headers = {
-            'location': url
+            'Location': self._url
         }
 
         super().__init__(None, '', status=self._status, headers=headers)

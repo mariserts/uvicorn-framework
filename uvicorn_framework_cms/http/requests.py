@@ -1,7 +1,8 @@
 from uvicorn_framework.conf import settings
 from uvicorn_framework.http.requests import Request as UFRequest
 
-from ..database.models import Session, User
+from ..database.lookups.sessions import get_session
+from ..database.lookups.users import get_user
 
 
 class Request(UFRequest):
@@ -26,19 +27,13 @@ class Request(UFRequest):
 
     def get_request_user(self):
 
-        cursor = settings.DB_ENGINE.cursor
-
         session_id = self.session_token
         if session_id is None:
             return None
 
-        session = cursor.query(Session).filter_by(
-            id=session_id
-        ).first()
+        session = get_session(id=session_id)
 
         if session is None:
             return None
 
-        return cursor.query(User).filter_by(
-            id=session.user_id
-        ).first()
+        return get_user(id=session.user_id)

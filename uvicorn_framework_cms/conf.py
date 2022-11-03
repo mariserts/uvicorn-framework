@@ -24,7 +24,6 @@ from .admin.viewsets.sign_out import SignOutViewSet
 from . import constants
 
 from .database.models import CMSModel
-from .database.models import User
 
 from .http.requests import Request
 
@@ -35,16 +34,6 @@ class Settings:
 
     def DB_MIGRATE(self, engine):
         CMSModel.metadata.create_all(engine.engine)
-
-    def CREATE_SUPERUSER(self, cursor, email, password):
-        user = self.CREATE_USER(cursor, email, password, True)
-        return user
-
-    def CREATE_USER(self, cursor, email, password, is_superuser=False):
-        user = User(email=email, password=password, is_superuser=is_superuser)
-        cursor.add(user)
-        cursor.commit()
-        return user
 
     def extend(self, base_settings):
 
@@ -147,6 +136,9 @@ class Settings:
 
         # Add session cookie name
         base_settings.SESSION_COOKIE_NAME = self.SESSION_COOKIE_NAME
+
+        # Add session cookie name
+        base_settings.CMS_SIGN_IN_URLNAME = constants.URLNAME_CMS_SIGN_IN
 
 
 settings = Settings()

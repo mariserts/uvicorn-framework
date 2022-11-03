@@ -9,22 +9,35 @@ class Application:
         self.set_routes()
 
     async def __call__(self, scope, receive, send):
-        message = await receive()
-        print('(%s) message from  recv is %r' % (id(self),message))
-        if message['type'] == 'lifespan.startup':
-            await send({'type': 'lifespan.startup.complete'})
-        elif message['type'] == 'lifespan.shutdown':
-            await send({'type': 'lifespan.shutdown.complete'})
-            return
 
-        if message["type"] == "http.disconnect":
-            return
+        if scope['type'] == 'lifespan':
+
+            while True:
+                message = await receive()
+                if message['type'] == 'lifespan.startup':
+                    await send({'type': 'lifespan.startup.complete'})
+                elif message['type'] == 'lifespan.shutdown':
+                    await send({'type': 'lifespan.shutdown.complete'})
+                    return
+
         else:
-            if not message.get("more_body"):
-                body = message.get('body', b'')
-                response = self.response(scope, body, send)
-                await send(response.start)
-                await send(response.body)
+
+            message = await receive()
+
+            if message['type'] == 'lifespan.startup':
+                await send({'type': 'lifespan.startup.complete'})
+            elif message['type'] == 'lifespan.shutdown':
+                await send({'type': 'lifespan.shutdown.complete'})
+                return
+
+            if message['type'] == 'http.disconnect':
+                return
+            else:
+                if not message.get('more_body'):
+                    body = message.get('body', b'')
+                    response = self.response(scope, body, send)
+                    await send(response.start)
+                    await send(response.body)
 
     def response(self, scope, receive, send):
         return NotImplementedResponse()

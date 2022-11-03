@@ -8,26 +8,27 @@ from .base import DatabaseEngine
 
 class SqliteDatabaseEngine(DatabaseEngine):
 
-    __cursor = None
     __engine = None
     __session = None
 
     filename = 'db.sqlite3'
 
     @property
-    def cursor(self):
-        if self.__cursor is not None:
-            return self.__cursor
-        Session = sessionmaker(bind=self.engine)
-        self.__cursor = Session()
-        return self.__cursor
-
-    @property
     def engine(self):
         if self.__engine is not None:
             return self.__engine
-        self.__engine = create_engine(f'sqlite:///{self.filename}', echo=True)
+        self.__engine = self.get_engine()
         return self.__engine
+
+    @property
+    def session(self):
+        return self.get_session()
+
+    def get_engine(self):
+        return create_engine(f'sqlite:///{self.filename}', echo=False)
+
+    def get_session(self):
+        return sessionmaker(bind=self.engine, expire_on_commit=False)
 
     def setup(self):
 
