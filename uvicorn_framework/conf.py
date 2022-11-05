@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     APP_NAME = 'uvicorn_framework'
 
-    # __DB_ENGINE = None
+    __DB_ENGINE = None
     __ROUTER = None
     __TEMPLATE_ENGINE = None
 

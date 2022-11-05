@@ -31,9 +31,15 @@ class SqliteDatabaseEngine(BaseDatabaseEngine):
         return self.get_session()
 
     def get_engine(self):
-        self.setup()
+
+        path = settings.DIR + '/' + self.filename
+
+        if os.path.exists(path) is False:
+            with open(path, 'x') as f:
+                f.write('')
+
         return create_engine(
-            f'sqlite:///{self.filename}',
+            f'sqlite:///{path}',
             echo=settings.DB_ECHO
         )
 
@@ -42,11 +48,3 @@ class SqliteDatabaseEngine(BaseDatabaseEngine):
             bind=self.engine,
             expire_on_commit=False
         )
-
-    def setup(self):
-
-        path = settings.DIR + '/' + self.filename
-
-        if os.path.exists(path) is False:
-            with open(path, 'x') as f:
-                f.write('')

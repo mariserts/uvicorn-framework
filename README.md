@@ -1,4 +1,4 @@
-# Uvicorn CMS
+# Uvicorn Framework
 
 - uvicorn
 - Jinja2
