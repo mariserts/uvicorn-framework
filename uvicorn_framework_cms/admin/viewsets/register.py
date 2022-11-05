@@ -3,8 +3,8 @@ from uvicorn_framework.conf import settings
 from uvicorn_framework.http.responses import RedirectResponse, Response, TemplateResponse
 from uvicorn_framework.viewsets import ViewSet
 
-from ...database.lookups.authenticate import register
-from ...database.lookups.users import get_user
+from ...database.queries.authenticate import register
+from ...database.queries.users import get_user
 from ...validators.emails import email_is_valid
 
 

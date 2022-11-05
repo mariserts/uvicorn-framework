@@ -3,15 +3,21 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from .base import DatabaseEngine
+from ...conf import settings
+
+from .base import BaseDatabaseEngine
 
 
-class SqliteDatabaseEngine(DatabaseEngine):
+class SqliteDatabaseEngine(BaseDatabaseEngine):
 
     __engine = None
     __session = None
 
     filename = 'db.sqlite3'
+
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
 
     @property
     def engine(self):
@@ -25,14 +31,21 @@ class SqliteDatabaseEngine(DatabaseEngine):
         return self.get_session()
 
     def get_engine(self):
-        return create_engine(f'sqlite:///{self.filename}', echo=False)
+        self.setup()
+        return create_engine(
+            f'sqlite:///{self.filename}',
+            echo=settings.DB_ECHO
+        )
 
     def get_session(self):
-        return sessionmaker(bind=self.engine, expire_on_commit=False)
+        return sessionmaker(
+            bind=self.engine,
+            expire_on_commit=False
+        )
 
     def setup(self):
 
-        path = self.settings.DIR + '/' + self.filename
+        path = settings.DIR + '/' + self.filename
 
         if os.path.exists(path) is False:
             with open(path, 'x') as f:

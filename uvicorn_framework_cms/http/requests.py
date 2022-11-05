@@ -1,8 +1,8 @@
 from uvicorn_framework.conf import settings
 from uvicorn_framework.http.requests import Request as UFRequest
 
-from ..database.lookups.sessions import get_session
-from ..database.lookups.users import get_user
+from ..database.queries.sessions import get_session
+from ..database.queries.users import get_user
 
 
 class Request(UFRequest):

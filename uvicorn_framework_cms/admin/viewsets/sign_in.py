@@ -4,7 +4,7 @@ from uvicorn_framework.http.responses import RedirectResponse, Response, Templat
 from uvicorn_framework.viewsets import ViewSet
 
 from ... import constants
-from ...database.lookups.authenticate import sign_in
+from ...database.queries.authenticate import sign_in
 from ...http.resolvers import reverse
 
 
@@ -13,6 +13,11 @@ class SignInViewSet(ViewSet):
     template = 'uvicorn_framework_cms/admin/pages/sign_in.html'
 
     def get(self, request):
+
+        if request.user is not None:
+            redirect_to = reverse(constants.URLNAME_CMS_PROJECTS)
+            return RedirectResponse(redirect_to)
+
         return TemplateResponse(
             request,
             self.template,
@@ -20,6 +25,10 @@ class SignInViewSet(ViewSet):
         )
 
     def post(self, request):
+
+        if request.user is not None:
+            redirect_to = reverse(constants.URLNAME_CMS_PROJECTS)
+            return RedirectResponse(redirect_to)
 
         redirect_to = request.body.get('redirect_to', None)
         email = request.body['email']

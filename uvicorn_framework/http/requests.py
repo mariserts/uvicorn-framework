@@ -1,5 +1,7 @@
 import urllib
 
+from ..conf import settings
+
 
 class Request:
 
@@ -8,7 +10,7 @@ class Request:
     __body = None
     __cookies = None
 
-    def __init__(self, scope, body, settings):
+    def __init__(self, scope, body):
         self._scope = scope
         self._body = body
         self._settings = settings

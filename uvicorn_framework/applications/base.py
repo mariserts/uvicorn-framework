@@ -1,14 +1,29 @@
 from ..conf import settings
 from ..http.responses import NotImplementedResponse
+from ..loaders import module_class_loader
 
 
-class Application:
+class BaseApplication:
 
-    def __init__(self, settings=settings):
-        self.settings = settings
+    def __init__(
+            self,
+            router_class,
+            request_class,
+            extra_settings
+        ):
+        self.router_class = module_class_loader(router_class)
+        self.request_class = module_class_loader(request_class)
+        self.extra_settings = extra_settings
+
+        self.extend_settings(settings)
         self.set_routes()
 
-    async def __call__(self, scope, receive, send):
+    async def __call__(
+            self,
+            scope,
+            receive,
+            send
+        ):
 
         if scope['type'] == 'lifespan':
 
@@ -43,13 +58,10 @@ class Application:
         return NotImplementedResponse()
 
     def set_routes(self):
-        for route in self.settings.ROUTES:
-            self.settings.ROUTER.register(route)
+        for route in settings.ROUTES:
+            settings.ROUTER.register(route)
 
-
-class HttpApplication(Application):
-
-    def response(self, scope, receive, send):
-        request = self.settings.REQUEST_CLASS(scope, receive, self.settings)
-        assert request.type == 'http'
-        return self.settings.ROUTER.get_reponse(request, self.settings)
+    def extend_settings(self, settings_to_extend):
+        settings_to_extend.REQUEST_CLASS = self.request_class
+        settings_to_extend.ROUTER_CLASS = self.router_class
+        self.extra_settings.extend(settings_to_extend)

@@ -1,3 +1,6 @@
+from ..conf import settings
+
+
 class Response:
 
     encoding = 'utf-8'
@@ -154,8 +157,14 @@ class TemplateResponse(Response):
 
     @property
     def content(self):
-        template_engine = self.request.settings.TEMPLATE_ENGINE
-        return template_engine.render(self.template, self.context)
+        template_engine = settings.TEMPLATE_ENGINE
+        context = self.context
+        context['request'] = self.request
+
+        print('Template', self.template)
+        print('Context', context)
+
+        return template_engine.render(self.template, context)
 
 
 class NotFoundResponse(Response):

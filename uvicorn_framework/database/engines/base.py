@@ -1,10 +1,9 @@
-class DatabaseEngine:
+class BaseDatabaseEngine:
 
     __engine = None
     __session = None
 
-    def __init__(self, settings, *args, **kwargs):
-        self.settings = settings
+    def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
         self.setup()

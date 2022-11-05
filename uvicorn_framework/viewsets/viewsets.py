@@ -12,6 +12,4 @@ class ViewSet:
         self.request = request
 
     def get_context(self):
-        return {
-            'request': self.request
-        }
+        return {}

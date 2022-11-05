@@ -1,16 +1,17 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from ..conf import settings
 
-class TemplateEngine:
+from .base import BaseTemplateEngine
+
+
+class Jinja2TemplateEngine(BaseTemplateEngine):
 
     _env = None
 
-    def __init__(self, settings):
-        self._settings = settings
-
     @property
     def encoding(self):
-        return self.settings.TEMPLATE_ENCODING
+        return settings.TEMPLATE_ENCODING
 
     @property
     def environment(self):
@@ -19,8 +20,9 @@ class TemplateEngine:
             return self._env
 
         paths = []
-        for app in self.settings.APPS:
-            paths.append(f'{app}/{self.package_path}')
+
+        for app in settings.APPS:
+            paths.append(f'{app}/{settings.TEMPLATES_DIR}')
 
         self._env = Environment(
             loader=FileSystemLoader(
@@ -35,10 +37,6 @@ class TemplateEngine:
     @property
     def package_path(self):
         return self.settings.TEMPLATES_DIR
-
-    @property
-    def settings(self):
-        return self._settings
 
     def get_template(self, template):
         return self.environment.get_template(template)

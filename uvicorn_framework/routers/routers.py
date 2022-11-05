@@ -1,5 +1,6 @@
 import re
 
+from ..conf import settings
 from ..http.responses import (
     NotFoundResponse,
     NotImplementedResponse,
@@ -7,12 +8,13 @@ from ..http.responses import (
     ServerErrorResponse
 )
 
+from .base import BaseRouter
 
-class Router:
+
+class Router(BaseRouter):
 
     __unset_cache_value = '-1'
     __cache_paths = {}
-    routes = []
 
     def __init__(self):
         pass
@@ -22,9 +24,6 @@ class Router:
 
     def set_cached_route(self, path, data):
         self.__cache_paths[path] = data
-
-    def register(self, route):
-        self.routes.append(route)
 
     def reverse(self, name, kwargs):
         for route in self.routes:
@@ -60,7 +59,7 @@ class Router:
 
         return cached_data
 
-    def get_reponse(self, request, settings):
+    def get_reponse(self, request):
 
         data = self.get_route_for_path(request.path)
 
@@ -89,6 +88,6 @@ class Router:
                 response = getattr(
                     view(request), request.method)(request, **kwargs)
             except Exception as e:
-                return ServerErrorResponse()
+                return ServerErrorResponse(str(e))
 
         return response

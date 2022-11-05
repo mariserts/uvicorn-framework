@@ -1,30 +1,27 @@
 import os
 
-from uvicorn_framework.conf import settings
+from uvicorn_framework.conf import BaseSettings
+from uvicorn_framework.routers.routes import route
 
-from uvicorn_framework_cms.conf import Settings as UFCSettings
+from viewsets import HomeViewSet
 
 
-class Settings:
+class Settings(BaseSettings):
 
     APPS = [
-        'uvicorn_framework_cms',
+        'new'
     ]
 
     DIR = os.path.dirname(os.path.abspath(__file__))
 
-    ROUTES = []
+    ROUTES = [
+        route(r'/', HomeViewSet, 'home')
+    ]
 
-    def DB_MIGRATE(self):
-        super().DB_MIGRATE()
-        UFCSettings.DB_MIGRATE(self.DB_ENGINE)
-
-    def extend(self, base_settings):
-        base_settings.APPS = self.APPS
-        base_settings.DIR = self.DIR
-        base_settings.ROUTES = self.ROUTES
-        base_settings.DB_MIGRATE = self.DB_MIGRATE
+    def extend(self, settings_to_extend):
+        settings_to_extend.DIR = self.DIR
+        settings_to_extend.APPS = settings_to_extend.APPS+ self.APPS
+        settings_to_extend.ROUTES = self.ROUTES
 
 
-Settings().extend(settings)
-UFCSettings().extend(settings)
+settings = Settings()

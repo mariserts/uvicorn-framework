@@ -3,7 +3,7 @@ from uvicorn_framework.http.responses import RedirectResponse
 from uvicorn_framework.viewsets import ViewSet
 
 from ... import constants
-from ...database.lookups.authenticate import sign_out
+from ...database.queries.authenticate import sign_out
 from ...http.resolvers import reverse
 
 

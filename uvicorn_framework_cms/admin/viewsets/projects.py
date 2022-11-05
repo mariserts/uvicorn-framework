@@ -20,3 +20,21 @@ class ProjectsViewSet(ViewSet):
     def post(self, request):
         # Add new project
         return RedirectResponse('/')
+
+    def get_context(self):
+
+        context = super().get_context()
+
+        context['page'] = {
+            'title': 'projects',
+            'subsections': []
+        }
+
+        context['projects'] = {
+            'results': [],
+            'pages': 1,
+            'page': 1,
+            'total': 0,
+        }
+
+        return context
