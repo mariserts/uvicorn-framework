@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     def extend(self, settings_to_extend):
         settings_to_extend.DIR = self.DIR
-        settings_to_extend.APPS = settings_to_extend.APPS+ self.APPS
+        settings_to_extend.APPS = settings_to_extend.APPS + self.APPS
         settings_to_extend.ROUTES = self.ROUTES
 
 
