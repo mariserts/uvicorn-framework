@@ -3,13 +3,13 @@ import os
 from uvicorn_framework.conf import BaseSettings
 from uvicorn_framework.routers.routes import route
 
-from viewsets import HomeViewSet
+from .viewsets import HomeViewSet
 
 
 class Settings(BaseSettings):
 
     APPS = [
-        'new'
+        'demo_app'
     ]
 
     DIR = os.path.dirname(os.path.abspath(__file__))
