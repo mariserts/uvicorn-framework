@@ -4,3 +4,4 @@
 - Jinja2
 - Pydantic
 - SQLAlchemy
+- hashlib
