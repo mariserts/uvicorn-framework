@@ -2,3 +2,4 @@ __pycache__
 .venv
 db.sqlite3
 uvicorn_framework_cms
+uvicorn_framework_cms/*
