@@ -8,4 +8,4 @@
 
 ## Running app
 
-Run `uvicorn app:app`
+Run `uvicorn demo_app.app:app`
