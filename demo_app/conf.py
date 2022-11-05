@@ -3,7 +3,7 @@ import os
 from uvicorn_framework.conf import BaseSettings
 from uvicorn_framework.routers.routes import route
 
-from .viewsets import HomeViewSet
+from .viewsets import TemplateViewSet, RedirectViewSet
 
 
 class Settings(BaseSettings):
@@ -15,7 +15,8 @@ class Settings(BaseSettings):
     DIR = os.path.dirname(os.path.abspath(__file__))
 
     ROUTES = [
-        route(r'/', HomeViewSet, 'home')
+        route(r'/', TemplateViewSet, 'template_view'),
+        route(r'/redirect/', RedirectViewSet, 'redirect_view'),
     ]
 
     def extend(self, settings_to_extend):

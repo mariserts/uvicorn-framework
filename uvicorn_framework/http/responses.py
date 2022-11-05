@@ -160,10 +160,6 @@ class TemplateResponse(Response):
         template_engine = settings.TEMPLATE_ENGINE
         context = self.context
         context['request'] = self.request
-
-        print('Template', self.template)
-        print('Context', context)
-
         return template_engine.render(self.template, context)
 
 
