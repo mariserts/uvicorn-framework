@@ -1,5 +1,5 @@
 from ..conf import settings
-from ..loaders import module_class_loader
+from ..loaders import import_string
 
 from .base import BaseApplication
 
@@ -24,9 +24,9 @@ class HttpApplication(BaseApplication):
             extra_settings=None
         ):
 
-        self.db_engine = module_class_loader(db_engine)
-        self.db_model_class = module_class_loader(db_model_class)
-        self.template_engine = module_class_loader(template_engine)
+        self.db_engine = import_string(db_engine)
+        self.db_model_class = import_string(db_model_class)
+        self.template_engine = import_string(template_engine)
 
         super().__init__(
             router_class=router_class,

@@ -1,7 +1,7 @@
 from importlib import import_module
 
 
-def module_class_loader(string):
+def import_string(string):
 
     if isinstance(string, str) is False:
         raise TypeError('"string" must be instance of str')

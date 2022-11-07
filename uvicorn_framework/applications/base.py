@@ -1,6 +1,6 @@
 from ..conf import settings
 from ..http.responses import NotImplementedResponse
-from ..loaders import module_class_loader
+from ..loaders import import_string
 
 
 class BaseApplication:
@@ -11,8 +11,8 @@ class BaseApplication:
             request_class,
             extra_settings
         ):
-        self.router_class = module_class_loader(router_class)
-        self.request_class = module_class_loader(request_class)
+        self.router_class = import_string(router_class)
+        self.request_class = import_string(request_class)
         self.extra_settings = extra_settings
 
         self.extend_settings(settings)

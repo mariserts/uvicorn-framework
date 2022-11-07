@@ -22,7 +22,7 @@ def hash_value(
 
 
 def hashed_value_matches(
-        password: str,
-        hashed_password: str
+        value: str,
+        hashed_value: str
     ) -> bool:
-    return hash_value(password) == hashed_password
+    return hash_value(value) == hashed_value

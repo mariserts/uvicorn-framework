@@ -1,6 +1,10 @@
+import uuid
 import urllib
 
+from .. import constants
+
 from ..conf import settings
+from ..cryptography import hash_value
 
 
 class Request:
@@ -11,6 +15,7 @@ class Request:
     __cookies = None
 
     def __init__(self, scope, body):
+        self.id = uuid.uuid4().hex
         self._scope = scope
         self._body = body
         self._settings = settings
@@ -84,3 +89,16 @@ class Request:
     @property
     def type(self):
         return self._scope['type']
+
+    @property
+    def csrf_token(self):
+        return self.cookies.get(
+            constants.COOKIE_NAME_CSRF_TOKEN,
+            self.get_csrf_token()
+        )
+
+    def get_csrf_token(self):
+        return hash_value(self.id)
+
+    def get_form_csrf_token(self):
+        return hash_value(self.csrf_token)
