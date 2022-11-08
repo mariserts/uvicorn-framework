@@ -2,9 +2,19 @@ from .. import constants
 from ..conf import settings
 
 
+class RewokeCSRFTokenResponseMixin:
+
+    def get_csrf_cookie(self):
+
+        return self.create_cookie(
+            constants.COOKIE_NAME_CSRF_TOKEN,
+            '-1',
+            max_age=-9999
+        )
+
+
 class Response:
 
-    clear_csrf = False
     encoding = 'utf-8'
     default_headers = [
         [
@@ -60,8 +70,6 @@ class Response:
         headers += self.get_default_headers()
 
         csrf_cookie = self.get_csrf_cookie()
-        print('-------------------------')
-        print(csrf_cookie)
         if csrf_cookie is not None:
             headers.append(csrf_cookie)
 
@@ -70,8 +78,6 @@ class Response:
                 key.encode('utf-8', 'strict'),
                 value.encode('utf-8', 'strict')
             ])
-
-        print(headers)
 
         return headers
 
@@ -153,19 +159,14 @@ class Response:
 
     def get_csrf_cookie(self):
 
-        clear_token_cookie = self.create_cookie(
-            constants.COOKIE_NAME_CSRF_TOKEN,
-            '-1',
-            max_age=-9999
-        )
-
-        if self.clear_csrf is True:
-            return clear_token_cookie
-
         if self.request is not None:
 
             if self.request.method == 'post':
-                return clear_token_cookie
+                return self.create_cookie(
+                    constants.COOKIE_NAME_CSRF_TOKEN,
+                    '-1',
+                    max_age=-9999
+                )
 
             return self.create_cookie(
                 constants.COOKIE_NAME_CSRF_TOKEN,
@@ -173,24 +174,6 @@ class Response:
             )
 
         return None
-
-class RedirectResponse(Response):
-
-    clear_csrf = True
-
-    def __init__(self, url, permanent=False):
-        self._url = url
-        self._permanent = permanent
-        self._status = 302
-
-        if self._permanent is True:
-            self._status = 301
-
-        headers = {
-            'Location': self._url
-        }
-
-        super().__init__(None, '', status=self._status, headers=headers)
 
 
 class TemplateResponse(Response):
@@ -224,8 +207,25 @@ class TemplateResponse(Response):
         return template_engine.render(self.template, context)
 
 
-class ErrorResponse(Response):
-    clear_csrf = True
+class RedirectResponse(RewokeCSRFTokenResponseMixin, Response):
+
+    def __init__(self, url, permanent=False):
+        self._url = url
+        self._permanent = permanent
+        self._status = 302
+
+        if self._permanent is True:
+            self._status = 301
+
+        headers = {
+            'Location': self._url
+        }
+
+        super().__init__(None, '', status=self._status, headers=headers)
+
+
+class ErrorResponse(RewokeCSRFTokenResponseMixin, Response):
+    pass
 
 
 class BadRequestResponse(ErrorResponse):
