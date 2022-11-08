@@ -96,7 +96,7 @@ class Response:
             same_site=None,
         ):
 
-        cookie = create_cookie(
+        cookie = self.create_cookie(
             key,
             value,
             max_age=max_age,
