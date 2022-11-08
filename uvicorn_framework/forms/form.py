@@ -71,14 +71,18 @@ class BaseForm:
     def render(self):
 
         html = self.render_form()
-        csrf_html = self.render_csrf_token()
-        field_html = ''
+        field_htmls = []
 
         fields = self.get_form_fields()
-        for name, field in fields.items():
-            field_html += field.render()
 
-        field_html = csrf_html + field_html
+        for name, field in fields.items():
+            field_htmls.append([field.order, field.render()])
+
+        field_htmls.sort(key=lambda x: x[0])
+
+        field_htmls = list(map(lambda x: x[1], field_htmls))
+
+        field_html = self.render_csrf_token() + ''.join(field_htmls)
 
         html = re.sub(r'\{\}', field_html, html)
 

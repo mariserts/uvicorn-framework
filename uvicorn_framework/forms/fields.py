@@ -13,7 +13,7 @@ class BaseField:
     def __init__(
             self,
             autocomplete='true',
-            class_name='form-control',
+            class_name=None,
             id='',
             label='',
             name='',
@@ -29,6 +29,7 @@ class BaseField:
         self.id = id
         self.label = label
         self.name = name
+        self.order = order
         self.placeholder = placeholder
         self.required = required
         self.value = value
@@ -84,9 +85,10 @@ class Button(BaseField):
 
     def __init__(
             self,
-            class_name='btn btn-default',
+            class_name=None,
             label='',
             name=None,
+            order=0,
             value=None,
             wrapper=None,
         ):
@@ -94,6 +96,7 @@ class Button(BaseField):
         self.class_name = class_name
         self.label = label
         self.name = name
+        self.order = order
         self.value = value
         self.wrapper = wrapper
 
