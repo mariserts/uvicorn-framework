@@ -26,7 +26,14 @@ class Request:
         if self.__body is not None:
             return self.__body
 
-        decoded_body = self._body.decode(self.encoding, 'strict')
+        body = b''
+
+        if self.method == 'post':
+            body = self._body
+        elif self.method == 'get':
+            body = self._scope['query_string']
+
+        decoded_body = body.decode(self.encoding, 'strict')
         clean_string = urllib.parse.unquote(decoded_body)
 
         out = {}

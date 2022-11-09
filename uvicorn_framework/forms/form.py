@@ -5,7 +5,8 @@ from markupsafe import Markup
 
 from ..constants import FIELD_NAME_CSRF_TOKEN
 
-from .fields import BaseField
+from .exceptions import FieldValidationError, FormValidationError
+from .fields.base import BaseField
 
 
 class BaseForm:
@@ -29,6 +30,27 @@ class BaseForm:
         self.template = template
         self.class_names = class_names
 
+    def is_valid(self):
+
+        fields = self.get_form_fields()
+        errors = {}
+
+        for key, field in fields.items():
+
+            try:
+                print('Validating field:', key, field)
+                field.is_valid()
+            except FieldValidationError as e:
+                errors[e.field] = e.message
+
+        if errors != {}:
+            raise FormValidationError(
+                errors=errors,
+                message='Form is invalid'
+            )
+
+        return True
+
     def get_form_fields(self):
 
         if self._fields is not None:
@@ -40,6 +62,7 @@ class BaseForm:
             if key.startswith('__') is False and key.endswith('__') is False:
                 if isinstance(field, BaseField) is True:
                     if key in self.data:
+                        field.name = key
                         field.value = self.data[key]
                     fields[key] = field
 
